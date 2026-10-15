@@ -1,6 +1,9 @@
 package com.wegrow.controller;
 
+import com.wegrow.dto.DepartmentRequest;
+import com.wegrow.dto.DepartmentResponse;
 import com.wegrow.entity.Department;
+import com.wegrow.mapper.DepartmentMapper;
 import com.wegrow.service.DepartmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,15 +14,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/departments")
 public class DepartmentController {
-    private final DepartmentService departmentService;
 
-    public DepartmentController(DepartmentService departmentService) {
+    private final DepartmentService departmentService;
+    private final DepartmentMapper departmentMapper;
+
+    public DepartmentController(DepartmentService departmentService, DepartmentMapper departmentMapper) {
         this.departmentService = departmentService;
+        this.departmentMapper = departmentMapper;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Department add(@Valid @RequestBody Department department) {
-        return departmentService.add(department);
+    public DepartmentResponse add(@Valid @RequestBody DepartmentRequest request) {
+        Department department = departmentMapper.toEntity(request);
+        Department savedDepartment = departmentService.add(department);
+        return departmentMapper.toResponse(savedDepartment);
+    }
+
+    @GetMapping
+    public List<Department> getAll() {
+        return departmentService.getAll();
     }
 }
