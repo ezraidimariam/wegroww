@@ -31,4 +31,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", message));
     }
+
+    @ExceptionHandler(DepartmentNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleDepartmentNotFound(DepartmentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DepartmentHasEmployeesException.class)
+    public ResponseEntity<Map<String, String>> handleDepartmentHasEmployees(DepartmentHasEmployeesException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
+    }
 }

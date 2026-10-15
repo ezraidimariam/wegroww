@@ -2,11 +2,14 @@ package com.wegrow.service;
 
 import com.wegrow.entity.Department;
 import com.wegrow.exception.DepartmentAlreadyExistsException;
+import com.wegrow.exception.DepartmentHasEmployeesException;
+import com.wegrow.exception.DepartmentNotFoundException;
 import com.wegrow.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -23,5 +26,14 @@ public class DepartmentService {
             throw new DepartmentAlreadyExistsException(department.getName());
         }
         return departmentRepository.save(department);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Optional<Department> department = departmentRepository.findById(id);
+        if(department.isEmpty()) {
+            throw  new DepartmentNotFoundException("Department not found with id: " + id);
+        }
+        departmentRepository.delete(department.get());
     }
 }

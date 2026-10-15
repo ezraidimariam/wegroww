@@ -31,8 +31,9 @@ public class DepartmentController {
         return departmentMapper.toResponse(savedDepartment);
     }
 
-    @GetMapping
-    public List<Department> getAll() {
-        return departmentService.getAll();
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
+        departmentService.delete(id);
     }
 }
