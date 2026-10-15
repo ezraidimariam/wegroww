@@ -1,0 +1,11 @@
+package com.wegrow.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.CONFLICT)
+public class DepartmentAlreadyExistsException extends RuntimeException {
+    public DepartmentAlreadyExistsException(String name) {
+        super("A department with the name '" + name + "' already exists.");
+    }
+}
