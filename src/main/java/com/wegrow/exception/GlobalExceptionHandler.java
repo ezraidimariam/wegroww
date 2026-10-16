@@ -41,4 +41,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleDepartmentHasEmployees(DepartmentHasEmployeesException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
     }
+
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotFound(ResourceNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", exception.getMessage()));
+    }
 }
