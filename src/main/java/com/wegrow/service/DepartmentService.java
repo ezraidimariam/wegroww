@@ -1,9 +1,11 @@
 package com.wegrow.service;
 
+import com.wegrow.dto.DepartmentResponse;
 import com.wegrow.entity.Department;
 import com.wegrow.exception.DepartmentAlreadyExistsException;
 import com.wegrow.exception.DepartmentHasEmployeesException;
 import com.wegrow.exception.DepartmentNotFoundException;
+import com.wegrow.mapper.DepartmentMapper;
 import com.wegrow.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,9 @@ public class DepartmentService {
             throw  new DepartmentNotFoundException("Department not found with id: " + id);
         }
         departmentRepository.delete(department.get());
+    }
+
+    public List<Department> getAll() {
+        return departmentRepository.findAll();
     }
 }

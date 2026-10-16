@@ -1,5 +1,6 @@
 package com.wegrow.controller;
 
+import com.wegrow.dto.DepartmentListResponse;
 import com.wegrow.dto.DepartmentRequest;
 import com.wegrow.dto.DepartmentResponse;
 import com.wegrow.entity.Department;
@@ -35,5 +36,16 @@ public class DepartmentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") Long id) {
         departmentService.delete(id);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<DepartmentResponse> getAll() {
+        return departmentService.getAll().stream()
+//             method reference
+//            .map(DepartmentMapper::toResponse) static method
+//            .map(departmentMapper::toResponse).toList(); instance method
+            .map(department -> departmentMapper.toResponse(department))
+            .toList();
     }
 }
