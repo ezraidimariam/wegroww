@@ -23,8 +23,10 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EmployeeResponse addEmployee(@Valid @RequestBody EmployeeRequest request) {
-        Employee employee = employeeService.add(request);
-        return employeeMapper.toResponse(employee);
+//        Employee employee = employeeService.add(request);
+//        return employeeMapper.toResponse(employee);
+        return employeeService.add(request);
     }
 }

@@ -4,6 +4,7 @@ import com.wegrow.dto.EmployeeRequest;
 import com.wegrow.dto.EmployeeResponse;
 import com.wegrow.entity.Department;
 import com.wegrow.entity.Employee;
+import com.wegrow.exception.EmployeeAlreadyExistsException;
 import com.wegrow.exception.ResourceNotFoundException;
 import com.wegrow.mapper.EmployeeMapper;
 import com.wegrow.repository.DepartmentRepository;
@@ -25,14 +26,19 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Employee add(EmployeeRequest request) {
+    public EmployeeResponse add(EmployeeRequest request) {
+
+        if(employeeRepository.existsByEmployeeNumber(request.getEmployeeNumber())) {
+            throw new EmployeeAlreadyExistsException(request.getEmployeeNumber());
+        }
 
         Department department = departmentRepository.findById(request.getDepartmentId())
             .orElseThrow(() -> new ResourceNotFoundException("Department not found with ID: " + request.getDepartmentId()));
 
         Employee employee = employeeMapper.toEntity(request, department);
 
+        Employee savedEmployee = employeeRepository.save(employee);
 
-        return employeeRepository.save(employee);
+        return employeeMapper.toResponse(savedEmployee);
     }
 }
