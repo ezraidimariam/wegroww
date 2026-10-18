@@ -1,8 +1,6 @@
 package com.wegrow.controller;
 
-import com.wegrow.dto.DepartmentListResponse;
-import com.wegrow.dto.DepartmentRequest;
-import com.wegrow.dto.DepartmentResponse;
+import com.wegrow.dto.*;
 import com.wegrow.entity.Department;
 import com.wegrow.mapper.DepartmentMapper;
 import com.wegrow.service.DepartmentService;
@@ -26,7 +24,7 @@ public class DepartmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DepartmentResponse add(@Valid @RequestBody DepartmentRequest request) {
+    public DepartmentResponse add(@Valid @RequestBody DepartmentCreateRequest request) {
         Department department = departmentMapper.toEntity(request);
         Department savedDepartment = departmentService.add(department);
         return departmentMapper.toResponse(savedDepartment);
@@ -55,5 +53,4 @@ public class DepartmentController {
     public List<DepartmentListResponse> findAllWithEmployeeCount() {
         return departmentService.findAllWithEmployeeCount();
     }
-
 }

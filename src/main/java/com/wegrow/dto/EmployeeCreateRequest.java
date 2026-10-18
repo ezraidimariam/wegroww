@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class EmployeeRequest {
+public class EmployeeCreateRequest {
 
     @NotBlank(message = "Employee number is required")
     @Size(max = 50)
@@ -26,7 +26,7 @@ public class EmployeeRequest {
     @NotNull(message = "Contract type is required")
     private ContractType contractType;
 
-    public EmployeeRequest() {
+    public EmployeeCreateRequest() {
     }
 
     public String getEmployeeNumber() {

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class DepartmentRequest {
+public class DepartmentCreateRequest {
 
     @NotBlank(message = "Department name is required")
     @Size(
@@ -21,7 +21,7 @@ public class DepartmentRequest {
 
     private String description;
 
-    public DepartmentRequest() {
+    public DepartmentCreateRequest() {
     }
 
     public String getName() {
