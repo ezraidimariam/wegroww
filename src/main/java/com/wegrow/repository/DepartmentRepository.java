@@ -5,6 +5,7 @@ import com.wegrow.dto.DepartmentListResponse;
 import com.wegrow.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -38,4 +39,11 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
         GROUP BY d.id, d.name, d.description
     """)
     List<DepartmentListResponse> findAllWithEmployeeCount();
+
+    @Query(value = """
+        SELECT COUNT(e.id)
+        FROM employees e
+        WHERE e.department_id = :departmentId
+    """, nativeQuery = true)
+    long countEmployeesByDepartmentId(@Param("departmentId") Long departmentId);
 }

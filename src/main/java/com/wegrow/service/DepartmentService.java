@@ -6,6 +6,7 @@ import com.wegrow.entity.Department;
 import com.wegrow.exception.DepartmentAlreadyExistsException;
 import com.wegrow.exception.DepartmentHasEmployeesException;
 import com.wegrow.exception.DepartmentNotFoundException;
+import com.wegrow.exception.ResourceNotFoundException;
 import com.wegrow.mapper.DepartmentMapper;
 import com.wegrow.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
@@ -37,7 +38,11 @@ public class DepartmentService {
     public void delete(Long id) {
         Optional<Department> department = departmentRepository.findById(id);
         if(department.isEmpty()) {
-            throw  new DepartmentNotFoundException("Department not found with id: " + id);
+            throw new ResourceNotFoundException("Department not found with id: " + id);
+        }
+        long employeeCount = departmentRepository.countEmployeesByDepartmentId(id);
+        if(employeeCount > 0) {
+            throw new DepartmentHasEmployeesException(id);
         }
         departmentRepository.delete(department.get());
     }
