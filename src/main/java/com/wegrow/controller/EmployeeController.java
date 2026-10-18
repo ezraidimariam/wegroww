@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/employees")
+@RequestMapping("/api/departements/{id}/employes")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -24,9 +24,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeResponse addEmployee(@Valid @RequestBody EmployeeRequest request) {
-//        Employee employee = employeeService.add(request);
-//        return employeeMapper.toResponse(employee);
-        return employeeService.add(request);
+    public EmployeeResponse addEmployee(@PathVariable("id") Long departmentId, @Valid @RequestBody EmployeeRequest request) {
+        return employeeService.add(departmentId, request);
     }
 }

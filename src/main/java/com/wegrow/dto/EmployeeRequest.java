@@ -26,9 +26,6 @@ public class EmployeeRequest {
     @NotNull(message = "Contract type is required")
     private ContractType contractType;
 
-    @NotNull(message = "Department ID is required")
-    private Long departmentId;
-
     public EmployeeRequest() {
     }
 
@@ -72,11 +69,4 @@ public class EmployeeRequest {
         this.contractType = contractType;
     }
 
-    public Long getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
-    }
 }

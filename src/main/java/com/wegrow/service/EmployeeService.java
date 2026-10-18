@@ -10,6 +10,7 @@ import com.wegrow.mapper.EmployeeMapper;
 import com.wegrow.repository.DepartmentRepository;
 import com.wegrow.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,14 +27,14 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeResponse add(EmployeeRequest request) {
+    public EmployeeResponse add(@Param("id") Long departmentId, EmployeeRequest request) {
 
         if(employeeRepository.existsByEmployeeNumber(request.getEmployeeNumber())) {
             throw new EmployeeAlreadyExistsException(request.getEmployeeNumber());
         }
 
-        Department department = departmentRepository.findById(request.getDepartmentId())
-            .orElseThrow(() -> new ResourceNotFoundException("Department not found with ID: " + request.getDepartmentId()));
+        Department department = departmentRepository.findById(departmentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Department not found with ID: " + departmentId));
 
         Employee employee = employeeMapper.toEntity(request, department);
 
