@@ -1,5 +1,6 @@
 package com.wegrow.service;
 
+import com.wegrow.dto.DepartmentListResponse;
 import com.wegrow.dto.DepartmentResponse;
 import com.wegrow.entity.Department;
 import com.wegrow.exception.DepartmentAlreadyExistsException;
@@ -17,9 +18,11 @@ import java.util.Optional;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final DepartmentMapper departmentMapper;
 
-    public DepartmentService(DepartmentRepository departmentRepository) {
+    public DepartmentService(DepartmentRepository departmentRepository, DepartmentMapper departmentMapper) {
         this.departmentRepository = departmentRepository;
+        this.departmentMapper = departmentMapper;
     }
 
     @Transactional
@@ -41,5 +44,16 @@ public class DepartmentService {
 
     public List<Department> getAll() {
         return departmentRepository.findAll();
+    }
+
+//    public List<DepartmentListResponse> findAllWithEmployeeCount() {
+//        return departmentRepository.findAllWithEmployeeCount()
+//            .stream()
+//            .map(departmentMapper::toListResponse)
+//            .toList();
+//    }
+
+    public List<DepartmentListResponse> findAllWithEmployeeCount() {
+        return departmentRepository.findAllWithEmployeeCount();
     }
 }

@@ -48,4 +48,12 @@ public class DepartmentController {
             .map(department -> departmentMapper.toResponse(department))
             .toList();
     }
+
+
+    @GetMapping("/with-employee-count")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DepartmentListResponse> findAllWithEmployeeCount() {
+        return departmentService.findAllWithEmployeeCount();
+    }
+
 }
