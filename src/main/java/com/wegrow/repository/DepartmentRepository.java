@@ -1,6 +1,5 @@
 package com.wegrow.repository;
 
-import com.wegrow.dto.DepartmentListProjection;
 import com.wegrow.dto.DepartmentListResponse;
 import com.wegrow.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;

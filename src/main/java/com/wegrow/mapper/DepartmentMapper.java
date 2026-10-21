@@ -1,6 +1,6 @@
 package com.wegrow.mapper;
 
-import com.wegrow.dto.DepartmentRequest;
+import com.wegrow.dto.DepartmentCreateRequest;
 import com.wegrow.dto.DepartmentResponse;
 import com.wegrow.entity.Department;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DepartmentMapper {
 
-    public Department toEntity(DepartmentRequest request) {
+    public Department toEntity(DepartmentCreateRequest request) {
         Department department = new Department();
 
         department.setName(request.getName());

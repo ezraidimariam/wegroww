@@ -18,13 +18,13 @@ Le projet couvre les opérations suivantes :
 
 -   Java 21
 -   Maven
--   Spring Framework / Spring MVC
--   Spring Data
+-   Spring Boot / Spring MVC
+-   Spring Data JPA / Hibernate
+-   Jakarta Validation
 -   PostgreSQL
 -   Docker Compose
--   Tomcat 10.1+
--   Packaging WAR
--   Configuration Spring en XML
+-   Tomcat embarqué
+-   Packaging JAR exécutable
 
 ## Architecture
 
@@ -41,26 +41,26 @@ Le projet suit une architecture en couches :
 La base de données utilisée est PostgreSQL et elle peut être lancée avec
 Docker Compose.
 
-Pour démarrer les services définis dans le fichier `compose.yaml` ou
-`docker-compose.yml` :
+La configuration locale est dans `.env` (copiée depuis `.env.example`). Les
+identifiants sont réservés au développement local. Pour lancer PostgreSQL :
 
 ``` bash
 docker compose up -d
 ```
 
-Pour ouvrir une session PostgreSQL dans le conteneur `spring-postgres` :
+La base `wegrow_db` est initialisée avec les tables `departments` et
+`employees`, ainsi que quelques données de démonstration. Pour vérifier :
 
-``` bash
-docker exec -it spring-postgres psql -U postgres -d wegrow
+```bash
+docker exec -it spring-postgres psql -U app_user -d wegrow_db -c "\\dt"
+docker exec -it spring-postgres psql -U app_user -d wegrow_db -c "SELECT d.name, COUNT(e.id) AS employees FROM departments d LEFT JOIN employees e ON e.department_id = d.id GROUP BY d.id ORDER BY d.id;"
 ```
 
-Pour afficher les tables :
+Arrêter PostgreSQL sans effacer les données : `docker compose down`. Pour
+repartir de zéro, supprimer le volume avec `docker compose down -v` (cela
+efface définitivement les données locales de démonstration).
 
-``` sql
-\dt
-```
-
-### Gestion du schéma --- sans Liquibase
+### Gestion du schéma — sans Liquibase
 
 **Liquibase n'est pas configuré dans cette version du projet.** Le
 schéma de la base de données est donc géré par le script SQL
@@ -81,19 +81,19 @@ Lorsqu'une nouvelle table ou une nouvelle relation est ajoutée :
 > à chaque démarrage. Ne supprimez pas le volume pour forcer son
 > exécution sans avoir sauvegardé les données.
 
-## Endpoints prévus
+## Endpoints implémentés dans le code actuel
 
   Méthode    Endpoint                            Réponses attendues
   ---------- ----------------------------------- ---------------------
-  `POST`     `/api/departements`                 `201`, `409`
-  `GET`      `/api/departements`                 `200`
-  `DELETE`   `/api/departements/{id}`            `204`, `404`, `409`
-  `POST`     `/api/departements/{id}/employes`   `201`, `404`, `409`
-  `GET`      `/api/departements/{id}/employes`   `200`, `404`
+  `POST`     `/api/departments`                  `201`, `409`
+  `GET`      `/api/departments`                  `200`
+  `DELETE`   `/api/departments/{id}`             `204`, `404`, `409`
+  `GET`      `/api/departments/with-employee-count` `200`
+  `POST`     `/api/departements/{id}/employes`    `201`, `404`, `409`
+  `GET`      `/api/departements/{id}/employes`    `200`, `404`
 
-Les réponses indiquées correspondent aux spécifications attendues.
-Vérifier l'implémentation actuelle avant de considérer chaque endpoint
-comme terminé.
+Les contrôleurs utilisent actuellement les chemins anglais pour les
+départements et les chemins français pour les employés.
 
 ## Règles métier principales
 
@@ -106,16 +106,26 @@ comme terminé.
 -   La base de données doit préserver l'intégrité des données, y compris
     lors de requêtes simultanées.
 
-## Compilation
+## Démarrer l'API
 
-À la racine du projet :
+Démarrer PostgreSQL avec Docker Compose, puis lancer l'API :
 
 ``` bash
-mvn clean package
+docker compose up -d
+mvn spring-boot:run
 ```
 
-Le fichier WAR est généré dans le dossier `target/`. Il peut ensuite
-être déployé sur Tomcat 10.1+, selon la configuration du serveur.
+L'API écoute sur `http://localhost:8080`. La connexion PostgreSQL utilise
+par défaut `localhost:15432`, `wegrow_db` et `app_user`. Le mot de passe
+est défini dans `.env`. Ces valeurs peuvent être remplacées par les
+variables `DB_URL`, `DB_USERNAME` et `DB_PASSWORD`.
+
+Pour créer le JAR exécutable :
+
+```bash
+mvn clean package
+java -jar target/wegrow-api-1.0.0.jar
+```
 
 ## Note
 
