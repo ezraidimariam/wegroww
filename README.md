@@ -129,6 +129,6 @@ java -jar target/wegrow-api-1.0.0.jar
 
 ## Note
 
-Ce README décrit la configuration prévue pour le projet. Avant le
-déploiement, vérifier les paramètres de connexion PostgreSQL, les ports
-Docker, le nom du WAR et le contexte de déploiement Tomcat.
+L'application est livrée sous forme de JAR exécutable avec Tomcat embarqué.
+Vérifier les paramètres de connexion PostgreSQL et les ports Docker avant
+le déploiement.

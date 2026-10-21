@@ -10,6 +10,8 @@ import com.wegrow.mapper.EmployeeMapper;
 import com.wegrow.repository.DepartmentRepository;
 import com.wegrow.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,15 @@ public class EmployeeService {
 
         Employee employee = employeeMapper.toEntity(request, department);
 
-        Employee savedEmployee = employeeRepository.save(employee);
+        Employee savedEmployee;
+        try {
+            savedEmployee = employeeRepository.saveAndFlush(employee);
+        } catch (DataIntegrityViolationException exception) {
+            if (violatesConstraint(exception, "employees_employee_number_key")) {
+                throw new EmployeeAlreadyExistsException(request.getEmployeeNumber());
+            }
+            throw exception;
+        }
 
         return employeeMapper.toResponse(savedEmployee);
     }
@@ -55,5 +65,17 @@ public class EmployeeService {
                 .stream()
                 .map(employeeMapper::toResponse)
                 .toList();
+    }
+
+    private boolean violatesConstraint(DataIntegrityViolationException exception, String constraintName) {
+        Throwable cause = exception;
+        while (cause != null) {
+            if (cause instanceof ConstraintViolationException violation
+                    && constraintName.equals(violation.getConstraintName())) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 }

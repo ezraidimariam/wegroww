@@ -10,6 +10,8 @@ import com.wegrow.exception.ResourceNotFoundException;
 import com.wegrow.mapper.DepartmentMapper;
 import com.wegrow.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +33,14 @@ public class DepartmentService {
         if(departmentRepository.existsByName(department.getName())) {
             throw new DepartmentAlreadyExistsException(department.getName());
         }
-        return departmentRepository.save(department);
+        try {
+            return departmentRepository.saveAndFlush(department);
+        } catch (DataIntegrityViolationException exception) {
+            if (violatesConstraint(exception, "departments_name_key")) {
+                throw new DepartmentAlreadyExistsException(department.getName());
+            }
+            throw exception;
+        }
     }
 
     @Transactional
@@ -60,5 +69,17 @@ public class DepartmentService {
 
     public List<DepartmentListResponse> findAllWithEmployeeCount() {
         return departmentRepository.findAllWithEmployeeCount();
+    }
+
+    private boolean violatesConstraint(DataIntegrityViolationException exception, String constraintName) {
+        Throwable cause = exception;
+        while (cause != null) {
+            if (cause instanceof ConstraintViolationException violation
+                    && constraintName.equals(violation.getConstraintName())) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 }
